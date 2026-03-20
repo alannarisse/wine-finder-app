@@ -76,6 +76,7 @@ $wine-tertiary: (
   --color-text-medium: #315D5D;
   --color-text-light: #9DC1C1;
   --color-text-muted: #6b7c7c;
+  --color-text-white: #f9fafa;
 
   // Backgrounds
   --color-background: #ffffff;
@@ -247,21 +248,24 @@ a {
 .mat-mdc-form-field {
   width: 100%;
   max-width: 440px;
-
   .mdc-text-field--outlined {
     --mdc-outlined-text-field-container-shape: var(--radius-md);
   }
 }
 
+.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch::highlight {
+    border-left: 1px solid white;
+}
 .mat-mdc-select {
   background-color: white;
 }
 
 // Select panels
 .mat-mdc-select-panel {
+  background-color: rgba(255,255,255,.9);
   border-radius: var(--radius-md) !important;
   box-shadow: var(--shadow-lg) !important;
-  border: 1px solid rgba(10, 115, 115, 0.9);
+  // border: 1px solid rgba(10, 115, 115, 0.9);
   overflow: hidden;
 
   // Elegant entrance animation
@@ -278,23 +282,26 @@ a {
     transform: translateY(0) scale(1);
   }
 }
-
+.cdk-overlay-pane{  
+    background-color: rgba(255,255,255,.9);
+  }
 .mat-mdc-option {
   font-family: var(--font-body) !important;
   font-size: 16px !important;
   min-height: 48px !important;
   transition: background-color var(--duration-fast) var(--ease-out) !important;
-
+  background-color: rgba(255,255,255,.9);
+  
   &.mat-mdc-option-active,
   &:hover {
-    background-color: rgba(10, 115, 115, 0.06) !important;
+    background-color: rgba(10, 115, 115, 0.6) !important;
   }
 
   &.mdc-list-item--selected {
-    background-color: rgba(10, 115, 115, 0.1) !important;
+    background-color: rgba(10, 115, 115, 0.9) !important;
 
     .mdc-list-item__primary-text {
-      color: var(--color-primary) !important;
+      color: white !important;
       font-weight: 600 !important;
     }
   }
@@ -309,20 +316,21 @@ a {
   font-weight: 700 !important;
   letter-spacing: 0.03em;
   transition: all var(--duration-fast) var(--ease-out) !important;
+  color: white;
 }
 
 .mat-mdc-raised-button.mat-primary {
-  box-shadow: var(--shadow-sm), 0 4px 12px rgba(10, 115, 115, 0.25) !important;
+  box-shadow: var(--shadow-sm), 0 4px 12px rgba(10, 115, 115, 0.5) !important;
 
   &:hover {
-    box-shadow: var(--shadow-md), 0 6px 20px rgba(10, 115, 115, 0.3) !important;
+    box-shadow: var(--shadow-md), 0 6px 20px rgba(10, 115, 115, 0.6) !important;
     transform: translateY(-1px);
   }
 }
 
 // Dividers
 .mat-divider {
-  border-color: rgba(10, 115, 115, 0.12) !important;
+  border-color: rgba(10, 115, 115, 0.6) !important;
 }
 
 // =============================================================================
@@ -333,7 +341,7 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 ::-webkit-scrollbar-thumb {

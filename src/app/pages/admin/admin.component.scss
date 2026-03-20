@@ -2,8 +2,11 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  background-color:rgba(255,255,255,.9);
 }
-
+  .login-card{
+    background:white;
+  }
 .admin-header {
   display: flex;
   justify-content: space-between;
@@ -79,10 +82,11 @@
 .varietal-chip {
   display: inline-block;
   padding: 0.25rem 0.625rem;
-  background: linear-gradient(135deg, rgba(10, 115, 115, 0.1) 0%, rgba(237, 170, 37, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(10, 115, 115, 0.15) 0%, rgba(237, 170, 37, 0.15) 100%);
   border-radius: 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-primary);
+  font-size: 0.9rem;
+  color: var(--color-primary-dark);
+  border:1px solid var(--color-text-muted);
   font-weight: 500;
 }
 

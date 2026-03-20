@@ -67,3 +67,21 @@ For more information on using the Angular CLI, including detailed command refere
 ## MCP Servers
 This app uses the railway MCP Server and requires the [Railway CLI](https://docs.railway.com/cli)
 [How to install Railway MCP server](https://docs.railway.com/ai/mcp-server)
+
+# Terminal 1: Start backend
+cd wine-api
+npm run start:dev
+# Terminal 2: Seed the database (first time only)
+cd wine-api
+npm run seed
+# Terminal 3: Frontend (already running)
+cd wine-finder-app
+ng serve
+
+## SCSS to CSS
+Dev server (ng serve): Compiled CSS is served from memory (not written to disk)
+Production build (ng build): Output goes to dist/wine-finder-app/browser/ as bundled CSS files
+
+## Database weirdness
+command: psql -d postgres -U $(whoami) -c "CREATE DATABASE wine_finder;" 2>&1
+description: Create wine_finder database with current user
