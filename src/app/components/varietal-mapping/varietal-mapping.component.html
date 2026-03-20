@@ -1,0 +1,69 @@
+<div class="mapping-container">
+  <div class="mapping-header">
+    <h2>Varietal to Wine Mapping</h2>
+    <p class="description">
+      Map specific wines to varietal suggestions. When a pairing suggests a varietal,
+      wines mapped here will appear as purchasable recommendations.
+    </p>
+  </div>
+
+  <mat-accordion>
+    @for (varietal of varietalList; track varietal) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ varietal }}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ getWinesForVarietal(varietal).length }} wine(s) mapped
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div class="panel-content">
+          <div class="mapped-wines">
+            <h4>Mapped Wines</h4>
+            @if (getWinesForVarietal(varietal).length > 0) {
+              <div class="wine-chips">
+                @for (wine of getWinesForVarietal(varietal); track wine.id) {
+                  <div class="wine-chip">
+                    <img [src]="wine.thumbnailUrl" [alt]="wine.wineName" class="chip-thumb" />
+                    <div class="chip-info">
+                      <span class="chip-name">{{ wine.wineName }}</span>
+                      <span class="chip-winery">{{ wine.wineryName }}</span>
+                    </div>
+                    <button mat-icon-button (click)="removeWineFromVarietal(varietal, wine.id)" class="remove-btn">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="no-wines">No wines mapped to this varietal yet.</p>
+            }
+          </div>
+
+          <div class="add-wine">
+            <h4>Add Wine</h4>
+            <mat-form-field appearance="outline">
+              <mat-label>Select a wine to add</mat-label>
+              <mat-select (selectionChange)="addWineToVarietal(varietal, $event.value)">
+                @for (wine of getAvailableWinesForVarietal(varietal); track wine.id) {
+                  <mat-option [value]="wine.id">
+                    {{ wine.wineName }} - {{ wine.wineryName }} ({{ formatPrice(wine.estimatedPrice) }})
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+
+  @if (varietalList.length === 0) {
+    <div class="empty-state">
+      <mat-icon>link_off</mat-icon>
+      <p>No varietal mappings configured yet.</p>
+    </div>
+  }
+</div>

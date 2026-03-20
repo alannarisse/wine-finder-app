@@ -1,0 +1,100 @@
+// =============================================================================
+// FOOTER COMPONENT
+// Refined footer with elegant typography
+// =============================================================================
+
+footer {
+  background-color: var(--color-footer-bg, #3d4545);
+  color: rgba(255, 255, 255, 0.85);
+  padding: var(--space-7, 48px) var(--space-5, 24px);
+  text-align: center;
+  position: relative;
+
+  // Subtle top accent line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(237, 170, 37, 0.5) 50%,
+      transparent 100%
+    );
+  }
+
+  p {
+    margin: var(--space-2, 8px) 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+
+    &:first-of-type {
+      font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+  }
+
+  a {
+    color: var(--color-tertiary, #edaa25);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+    position: relative;
+    display: inline-block;
+
+    // Underline animation
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--color-tertiary, #edaa25);
+      transition: width 0.3s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+    }
+
+    &:hover {
+      color: var(--color-tertiary-light, #f5c04a);
+      text-shadow: 0 0 16px rgba(237, 170, 37, 0.4);
+
+      &::after {
+        width: 100%;
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-tertiary, #edaa25);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+  }
+
+  .admin-link {
+    margin-top: var(--space-4, 16px);
+    font-size: 0.8rem;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    a {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 400;
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: none;
+      }
+    }
+  }
+}

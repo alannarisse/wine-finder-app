@@ -1,0 +1,41 @@
+@if (hasRecommendations()) {
+  <section class="wine-recommendations">
+    <h4>{{ recommendationMessage }}</h4>
+
+    <div class="wine-list">
+      @for (wine of recommendedWines(); track wine.id) {
+        <button
+          class="wine-card"
+          (click)="openWineDetail(wine)"
+          type="button"
+          [attr.aria-label]="'View details for ' + wine.wineName"
+        >
+          <div class="wine-thumbnail">
+            <!-- Placeholder for thumbnail - replace with actual image when available -->
+            <div class="thumbnail-placeholder">
+              <span class="wine-icon">🍷</span>
+            </div>
+          </div>
+
+          <div class="wine-info">
+            <span class="wine-name">{{ wine.wineName }}</span>
+            <span class="winery-name">{{ wine.wineryName }}</span>
+            <span class="wine-meta">
+              <span class="varietal">{{ wine.varietal }}</span>
+              <span class="year">{{ formatYear(wine.year) }}</span>
+            </span>
+          </div>
+
+          <div class="wine-price">
+            {{ formatPrice(wine.estimatedPrice) }}
+          </div>
+
+          <span class="view-details">
+            <span class="details-text">Details</span>
+            <span class="arrow">→</span>
+          </span>
+        </button>
+      }
+    </div>
+  </section>
+}

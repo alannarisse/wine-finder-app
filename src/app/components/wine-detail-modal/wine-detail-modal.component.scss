@@ -1,0 +1,182 @@
+.wine-detail-modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  padding: 1.5rem;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+    gap: 2rem;
+    padding: 2rem;
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+.wine-image-container {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 600px) {
+    margin-bottom: 0;
+    width: 200px;
+  }
+}
+
+.wine-image {
+  max-width: 160px;
+  max-height: 320px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+  @media (min-width: 600px) {
+    max-width: 200px;
+    max-height: 400px;
+  }
+}
+
+.wine-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.wine-name {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+
+  @media (min-width: 600px) {
+    font-size: 2rem;
+  }
+}
+
+.winery-name {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 1.25rem 0;
+}
+
+.wine-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(10, 115, 115, 0.05) 0%, rgba(237, 170, 37, 0.05) 100%);
+  border-radius: 8px;
+  border-left: 3px solid var(--color-primary);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-label {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-value {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+
+  &.price {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+}
+
+.wine-description {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 1.25rem 0;
+  font-style: italic;
+}
+
+.winery-location {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: rgba(10, 115, 115, 0.03);
+  border-radius: 6px;
+
+  mat-icon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+.location-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.address {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.city-state {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.visit-winery-btn {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d8a8a 100%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  mat-icon {
+    margin-right: 0.5rem;
+    font-size: 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(10, 115, 115, 0.3);
+  }
+}

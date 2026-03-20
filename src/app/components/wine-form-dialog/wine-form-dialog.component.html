@@ -1,0 +1,130 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Wine' : 'Add Wine' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="wine-form">
+    <div class="form-section">
+      <h3>Wine Details</h3>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Wine Name</mat-label>
+        <input matInput formControlName="wineName" placeholder="e.g., Reserve Pinot Noir" />
+        @if (form.get('wineName')?.hasError('required')) {
+          <mat-error>Wine name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Varietal</mat-label>
+        <mat-select formControlName="varietal">
+          @for (varietal of varietals; track varietal) {
+            <mat-option [value]="varietal">{{ varietal }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get('varietal')?.hasError('required')) {
+          <mat-error>Varietal is required</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Year</mat-label>
+          <input matInput type="number" formControlName="year" placeholder="e.g., 2021" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Price ($)</mat-label>
+          <input matInput type="number" formControlName="estimatedPrice" placeholder="e.g., 45" />
+          @if (form.get('estimatedPrice')?.hasError('required')) {
+            <mat-error>Price is required</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Description (optional)</mat-label>
+        <textarea matInput formControlName="description" rows="3" placeholder="Tasting notes, awards, etc."></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3>Winery Information</h3>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Winery Name</mat-label>
+        <input matInput formControlName="wineryName" placeholder="e.g., Willamette Valley Vineyards" />
+        @if (form.get('wineryName')?.hasError('required')) {
+          <mat-error>Winery name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Street Address</mat-label>
+        <input matInput formControlName="wineryAddress" placeholder="e.g., 8800 Enchanted Way SE" />
+        @if (form.get('wineryAddress')?.hasError('required')) {
+          <mat-error>Address is required</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>City</mat-label>
+          <input matInput formControlName="wineryCity" placeholder="e.g., Turner" />
+          @if (form.get('wineryCity')?.hasError('required')) {
+            <mat-error>City is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>State</mat-label>
+          <input matInput formControlName="wineryState" placeholder="e.g., OR" />
+          @if (form.get('wineryState')?.hasError('required')) {
+            <mat-error>State is required</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Winery Website URL</mat-label>
+        <input matInput formControlName="wineryUrl" placeholder="https://..." />
+        @if (form.get('wineryUrl')?.hasError('required')) {
+          <mat-error>URL is required</mat-error>
+        }
+        @if (form.get('wineryUrl')?.hasError('pattern')) {
+          <mat-error>Must be a valid URL starting with http:// or https://</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-section">
+      <h3>Images</h3>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Full Image URL</mat-label>
+        <input matInput formControlName="imageUrl" placeholder="https://..." />
+        @if (form.get('imageUrl')?.hasError('required')) {
+          <mat-error>Image URL is required</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="thumbnail-field">
+        <mat-form-field appearance="outline">
+          <mat-label>Thumbnail URL</mat-label>
+          <input matInput formControlName="thumbnailUrl" placeholder="https://..." />
+          @if (form.get('thumbnailUrl')?.hasError('required')) {
+            <mat-error>Thumbnail URL is required</mat-error>
+          }
+        </mat-form-field>
+        <button mat-stroked-button type="button" (click)="useSameAsImage()" class="same-as-btn">
+          Same as image
+        </button>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid">
+    {{ isEditMode ? 'Save Changes' : 'Add Wine' }}
+  </button>
+</mat-dialog-actions>

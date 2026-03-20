@@ -1,0 +1,74 @@
+::ng-deep .mat-mdc-dialog-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+mat-dialog-content {
+  max-height: 70vh;
+}
+
+.wine-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.form-section {
+  margin-bottom: 1rem;
+
+  h3 {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(10, 115, 115, 0.15);
+  }
+
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+.thumbnail-field {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+
+  mat-form-field {
+    flex: 1;
+  }
+
+  .same-as-btn {
+    margin-top: 0.25rem;
+    white-space: nowrap;
+    font-size: 0.8125rem;
+  }
+}
+
+mat-dialog-actions {
+  padding: 1rem 0 0 0;
+  gap: 0.5rem;
+}
+
+::ng-deep {
+  .mat-mdc-form-field-subscript-wrapper {
+    height: 1rem;
+  }
+}

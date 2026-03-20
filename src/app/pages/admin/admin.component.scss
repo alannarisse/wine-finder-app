@@ -1,0 +1,137 @@
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-primary);
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+.tab-content {
+  padding: 1.5rem 0;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.wine-table {
+  width: 100%;
+
+  th {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  td {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+  }
+}
+
+.wine-thumbnail {
+  width: 40px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.varietal-chip {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  background: linear-gradient(135deg, rgba(10, 115, 115, 0.1) 0%, rgba(237, 170, 37, 0.1) 100%);
+  border-radius: 1rem;
+  font-size: 0.8125rem;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+
+  mat-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+  }
+
+  p {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-tab-group {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid rgba(10, 115, 115, 0.15);
+    }
+
+    .mat-mdc-tab-labels {
+      gap: 0.5rem;
+    }
+
+    .mdc-tab {
+      font-family: var(--font-body);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .mdc-tab-indicator__content--underline {
+      border-color: var(--color-primary);
+    }
+  }
+
+  .mat-mdc-table {
+    background: #fff;
+  }
+}

@@ -1,0 +1,46 @@
+<div class="wine-detail-modal">
+  <button mat-icon-button class="close-button" (click)="close()" aria-label="Close">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="wine-image-container">
+    <img [src]="wine.imageUrl" [alt]="wine.wineName" class="wine-image" />
+  </div>
+
+  <div class="wine-info">
+    <h2 class="wine-name">{{ wine.wineName }}</h2>
+    <p class="winery-name">{{ wine.wineryName }}</p>
+
+    <div class="wine-details">
+      <div class="detail-row">
+        <span class="detail-label">Varietal</span>
+        <span class="detail-value">{{ wine.varietal }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Year</span>
+        <span class="detail-value">{{ formattedYear }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Price</span>
+        <span class="detail-value price">{{ formattedPrice }}</span>
+      </div>
+    </div>
+
+    @if (wine.description) {
+      <p class="wine-description">{{ wine.description }}</p>
+    }
+
+    <div class="winery-location">
+      <mat-icon>location_on</mat-icon>
+      <div class="location-text">
+        <span class="address">{{ wine.wineryAddress }}</span>
+        <span class="city-state">{{ fullLocation }}</span>
+      </div>
+    </div>
+
+    <button mat-flat-button color="primary" class="visit-winery-btn" (click)="openWineryWebsite()">
+      <mat-icon>open_in_new</mat-icon>
+      Visit Winery Website
+    </button>
+  </div>
+</div>
