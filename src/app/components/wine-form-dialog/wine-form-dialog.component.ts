@@ -52,6 +52,7 @@ export class WineFormDialogComponent {
       estimatedPrice: [this.data.wine?.estimatedPrice || '', [Validators.required, Validators.min(0)]],
       wineryCity: [this.data.wine?.wineryCity || '', Validators.required],
       wineryState: [this.data.wine?.wineryState || '', Validators.required],
+      ava: [this.data.wine?.ava || ''],
       wineryAddress: [this.data.wine?.wineryAddress || '', Validators.required],
       wineryUrl: [this.data.wine?.wineryUrl || '', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
       imageUrl: [this.data.wine?.imageUrl || '', Validators.required],

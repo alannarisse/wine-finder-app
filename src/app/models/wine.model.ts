@@ -11,6 +11,7 @@ export interface Wine {
   wineryCity: string;
   wineryState: string;
   wineryAddress: string;
+  ava?: string; // American Viticultural Area (e.g., "Willamette Valley", "Napa Valley")
   wineryUrl: string;
   imageUrl: string; // bottle image
   thumbnailUrl: string; // smaller image for list view

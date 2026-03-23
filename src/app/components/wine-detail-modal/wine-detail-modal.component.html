@@ -24,6 +24,12 @@
         <span class="detail-label">Price</span>
         <span class="detail-value price">{{ formattedPrice }}</span>
       </div>
+      @if (wine.ava) {
+      <div class="detail-row">
+        <span class="detail-label">AVA</span>
+        <span class="detail-value">{{ wine.ava }}</span>
+      </div>
+      }
     </div>
 
     @if (wine.description) {

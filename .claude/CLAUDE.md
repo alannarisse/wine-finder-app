@@ -128,6 +128,7 @@ CREATE TABLE wines (
   estimated_price DECIMAL(10,2) NOT NULL,
   winery_city VARCHAR(100) NOT NULL,
   winery_state VARCHAR(100) NOT NULL,
+  ava VARCHAR(255),                    -- American Viticultural Area (e.g., "Willamette Valley")
   winery_address VARCHAR(255) NOT NULL,
   winery_url VARCHAR(500) NOT NULL,
   image_url VARCHAR(500) NOT NULL,
@@ -172,7 +173,7 @@ ADMIN_PASSWORD=winelover2024
 ```bash
 # Frontend (from wine-finder-app/)
 npm install
-ng serve
+npm start                    # or: ng serve
 # Open http://localhost:4200
 
 # Backend (from wine-api/)
@@ -187,12 +188,69 @@ npm run seed
 ### Production Build
 ```bash
 # Frontend
-ng build --configuration production
+npm run build                # or: ng build --configuration production
 
 # Backend
 npm run build
 npm run start:prod
 ```
+
+### Testing
+
+#### Unit Tests (Frontend)
+```bash
+cd wine-finder-app
+npm test                     # Run Karma unit tests
+```
+
+#### E2E Tests with Playwright
+```bash
+cd wine-finder-app
+
+# Run all e2e tests (headless)
+npm run e2e
+
+# Run tests with Playwright UI (interactive)
+npm run e2e:ui
+
+# Run tests with visible browser
+npm run e2e:headed
+
+# Run only scraper tests with visible browser
+npm run scrape
+```
+
+#### URL Scraper
+The URL scraper helps extract wine/winery data from websites to populate the database.
+set up tests in scraper.specs.ts
+
+```bash
+# Scrape a specific URL
+SCRAPE_URL="https://example-winery.com" npm run scrape
+
+# Run scraper tests (edit e2e/scraper.spec.ts to add URLs)
+npx playwright test e2e/scraper.spec.ts --headed
+
+# scrape one winery
+npx playwright test e2e/scraper.spec.ts --grep "scrape winery"
+
+# scrape a list of wineries
+npx playwright test e2e/scraper.spec.ts --grep "batch scrape multiple wineries"
+
+# open last report
+npx playwright show-report
+```
+
+**Scraper Features:**
+- Extract winery name, address, city, state
+- Find wine product details (name, varietal, year, price)
+- Discover wine images
+- Extract descriptions and tasting notes
+
+**Test Files:**
+- `e2e/app.spec.ts` - Basic app navigation and auth tests
+- `e2e/scraper.spec.ts` - URL scraper demonstration tests
+- `e2e/url-scraper.ts` - Scraper utility class
 
 ## Deployment
 
@@ -212,6 +270,62 @@ npm run start:prod
 
 ## Admin Access
 - URL: `/admin` (redirects to login if not authenticated)
-- Password: `winelover2024` (change in `auth.service.ts`)
+- Password: `xxxxx` (change in `auth.service.ts`)
 - Session stored in sessionStorage (clears on tab close)
 - Access via small "Admin" link in footer
+- Login popup has close button (X) that returns to home
+
+## NPM Scripts Quick Reference
+
+### wine-finder-app (Frontend)
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start dev server (http://localhost:4200) |
+| `npm run build` | Production build |
+| `npm test` | Run unit tests (Karma) |
+| `npm run e2e` | Run Playwright e2e tests (headless) |
+| `npm run e2e:ui` | Run Playwright with interactive UI |
+| `npm run e2e:headed` | Run Playwright with visible browser |
+| `npm run scrape` | Run URL scraper tests with visible browser |
+
+### wine-api (Backend)
+| Command | Description |
+|---------|-------------|
+| `npm run start:dev` | Start dev server with hot reload |
+| `npm run build` | Build for production |
+| `npm run start:prod` | Start production server |
+| `npm run seed` | Seed database with initial data |
+
+## Local PostgreSQL Setup
+
+```bash
+# Start PostgreSQL (macOS with Homebrew)
+brew services start postgresql@18
+
+# Connect to PostgreSQL (uses your macOS username)
+psql -d postgres
+
+# Create database
+CREATE DATABASE wine_finder;
+
+# .env file for wine-api
+DATABASE_URL=postgresql://YOUR_USERNAME@localhost:5432/wine_finder
+```
+
+## Wine Model Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| wineryName | string | Yes | Name of the winery |
+| wineName | string | Yes | Name of the wine |
+| varietal | string | Yes | Grape variety (e.g., "Pinot Noir") |
+| year | number | No | Vintage year |
+| estimatedPrice | number | Yes | Price in USD |
+| wineryCity | string | Yes | City where winery is located |
+| wineryState | string | Yes | State abbreviation (e.g., "OR") |
+| ava | string | No | American Viticultural Area (e.g., "Willamette Valley") |
+| wineryAddress | string | Yes | Street address |
+| wineryUrl | string | Yes | Winery website URL |
+| imageUrl | string | Yes | Full-size wine image URL |
+| thumbnailUrl | string | Yes | Thumbnail image URL |
+| description | string | No | Wine description/tasting notes |

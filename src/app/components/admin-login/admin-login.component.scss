@@ -7,8 +7,21 @@
 }
 
 .login-card {
+  position: relative;
   width: 100%;
   max-width: 380px;
+
+  .close-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: var(--color-text-secondary, #666);
+    z-index: 1;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
 
   mat-card-header {
     justify-content: center;

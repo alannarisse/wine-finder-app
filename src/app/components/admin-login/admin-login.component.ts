@@ -36,6 +36,10 @@ export class AdminLoginComponent {
     this.showPassword.update(v => !v);
   }
 
+  close(): void {
+    this.router.navigate(['/']);
+  }
+
   onSubmit(): void {
     this.error.set(null);
 

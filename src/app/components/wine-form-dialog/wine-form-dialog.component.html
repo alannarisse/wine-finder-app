@@ -84,6 +84,12 @@
       </div>
 
       <mat-form-field appearance="outline">
+        <mat-label>AVA (American Viticultural Area)</mat-label>
+        <input matInput formControlName="ava" placeholder="e.g., Willamette Valley, Napa Valley" />
+        <mat-hint>Optional - Wine growing region designation</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
         <mat-label>Winery Website URL</mat-label>
         <input matInput formControlName="wineryUrl" placeholder="https://..." />
         @if (form.get('wineryUrl')?.hasError('required')) {
