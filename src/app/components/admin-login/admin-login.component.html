@@ -1,5 +1,5 @@
 <div class="login-container">
-  <mat-card class="login-card" style="background:rgba(255,255,255,.9);">
+  <mat-card class="login-card" style="background: rgba(255, 255, 255, 0.9)">
     <button mat-icon-button class="close-button" (click)="close()" aria-label="Close">
       <mat-icon>close</mat-icon>
     </button>
@@ -11,20 +11,36 @@
       <form (ngSubmit)="onSubmit()" class="login-form">
         <mat-form-field appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput [type]="showPassword() ? 'text' : 'password'" [(ngModel)]="password" name="password"
-            autocomplete="current-password" />
-          <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()"
-            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+          <input
+            matInput
+            [type]="showPassword() ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="current-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          >
             <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
 
         @if (error()) {
-        <p class="error-message">{{ error() }}</p>
+          <p class="error-message" role="alert">{{ error() }}</p>
         }
 
-        <button mat-raised-button color="primary" type="submit" class="login-btn">
-          Login
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="login-btn"
+          [disabled]="submitting()"
+        >
+          {{ submitting() ? 'Signing in…' : 'Login' }}
         </button>
       </form>
     </mat-card-content>

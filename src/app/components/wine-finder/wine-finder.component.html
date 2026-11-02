@@ -1,62 +1,76 @@
-<div class="pairing-app">
-  @if (showInstructions()) {
-    <div class="instructions">
-      <h3>Let's find you some wine!</h3>
-      <p>
-        Choose a food category, when the second drop-down appears, choose the
-        closest preparation style to what you are making. We'll do our best to
-        find a good wine match for you!
-      </p>
-    </div>
-  }
-
-  <mat-form-field appearance="outline" class="category-select">
-    <mat-label>What are you eating?</mat-label>
-    <mat-select
-      [value]="selectedCategory()"
-      (selectionChange)="onCategoryChange($event.value)"
-    >
-      <mat-option value="">Select a category</mat-option>
-      @for (category of categories(); track category) {
-        <mat-option [value]="category">{{ capitalize(category) }}</mat-option>
+<main class="pairing-app">
+  <section class="finder-hero">
+    <div class="finder-content">
+      @if (showInstructions()) {
+        <div class="instructions">
+          <h1>Let's find you <span>some wine!</span></h1>
+          <p>
+            Choose a food category, when the second drop-down appears, choose the closest
+            preparation style to what you are making. We'll do our best to find a good wine match
+            for you!
+          </p>
+        </div>
       }
-    </mat-select>
-  </mat-form-field>
 
-  @if (subCategories().length > 0) {
-    <mat-form-field appearance="outline" class="subcategory-select">
-      <mat-label>How is it prepared?</mat-label>
-      <mat-select
-        [value]="selectedSubCategory()"
-        (selectionChange)="onSubCategoryChange($event.value)"
-      >
-        <mat-option value="">Select a preparation</mat-option>
-        @for (subCategory of subCategories(); track subCategory) {
-          <mat-option [value]="subCategory">{{ capitalize(subCategory) }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
+      <mat-form-field appearance="outline" class="category-select">
+        <mat-label>What are you eating?</mat-label>
+        <mat-select [value]="selectedCategory()" (selectionChange)="onCategoryChange($event.value)">
+          <mat-option value="">Select a category</mat-option>
+          @for (category of categories(); track category) {
+            <mat-option [value]="category">{{ capitalize(category) }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (subCategories().length > 0) {
+        <mat-form-field appearance="outline" class="subcategory-select">
+          <mat-label>How is it prepared?</mat-label>
+          <mat-select
+            [value]="selectedSubCategory()"
+            (selectionChange)="onSubCategoryChange($event.value)"
+          >
+            <mat-option value="">Select a preparation</mat-option>
+            @for (subCategory of subCategories(); track subCategory) {
+              <mat-option [value]="subCategory">{{ capitalize(subCategory) }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
+    <div class="hero-photo">
+      <img
+        src="images/golden-hour/hero-pour.jpg"
+        alt="Rosé being poured at a sunny outdoor table"
+        fetchpriority="high"
+      />
+    </div>
+  </section>
 
   @if (showResults()) {
     <div class="results">
-      <mat-divider></mat-divider>
+      <div class="result-photo">
+        <img
+          src="images/golden-hour/result-wine.jpg"
+          alt="A glass of wine beside a plate of food"
+          loading="lazy"
+        />
+      </div>
+      <div class="result-body">
+        <h3>Recommended Wine Style</h3>
+        <p class="pairing-style">{{ currentPairing()?.pairingStyle }}</p>
 
-      <h3>Recommended Wine Style</h3>
-      <p class="pairing-style">{{ currentPairing()?.pairingStyle }}</p>
-
-      <h4>Suggested Varietals</h4>
-      <mat-list>
-        @for (wine of currentPairing()?.pairingSuggestions; track wine) {
-          <mat-list-item>
-            <span class="wine-name">{{ wine }}</span>
-          </mat-list-item>
-        }
-      </mat-list>
-
+        <h4>Suggested Varietals</h4>
+        <mat-list>
+          @for (wine of currentPairing()?.pairingSuggestions; track wine) {
+            <mat-list-item>
+              <span class="wine-name">{{ wine }}</span>
+            </mat-list-item>
+          }
+        </mat-list>
+      </div>
       <app-wine-recommendations
         [pairingSuggestions]="currentPairing()?.pairingSuggestions || []"
       ></app-wine-recommendations>
     </div>
   }
-</div>
+</main>

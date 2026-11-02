@@ -1,33 +1,62 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  // Simple password - in production this would be server-side
-  // You can change this password to whatever you want
-  private readonly ADMIN_PASSWORD = 'winelover2024';
+  private readonly http = inject(HttpClient);
+  private readonly key = 'wine_admin_session';
+  private readonly authenticated = signal(false);
+  readonly isAuthenticated = this.authenticated.asReadonly();
 
-  private readonly _isAuthenticated = signal<boolean>(this.checkStoredAuth());
-
-  readonly isAuthenticated = this._isAuthenticated.asReadonly();
-
-  private checkStoredAuth(): boolean {
-    if (typeof sessionStorage === 'undefined') return false;
-    return sessionStorage.getItem('admin_auth') === 'true';
-  }
-
-  login(password: string): boolean {
-    if (password === this.ADMIN_PASSWORD) {
-      this._isAuthenticated.set(true);
-      sessionStorage.setItem('admin_auth', 'true');
-      return true;
+  get token(): string | null {
+    try {
+      const session = JSON.parse(sessionStorage.getItem(this.key) || 'null');
+      if (session && typeof session.token === 'string' && session.expiresAt > Date.now())
+        return session.token;
+    } catch {
+      /* Missing or invalid browser storage is an anonymous session. */
     }
-    return false;
+    this.clear();
+    return null;
   }
 
-  logout(): void {
-    this._isAuthenticated.set(false);
-    sessionStorage.removeItem('admin_auth');
+  clear(): void {
+    this.authenticated.set(false);
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(this.key);
+      sessionStorage.removeItem('admin_auth');
+    }
+  }
+
+  async login(password: string): Promise<void> {
+    const session = await firstValueFrom(
+      this.http.post<{ token: string; expiresAt: number }>(`${environment.apiUrl}/auth/login`, {
+        password,
+      }),
+    );
+    sessionStorage.setItem(this.key, JSON.stringify(session));
+    this.authenticated.set(true);
+  }
+
+  async checkSession(): Promise<boolean> {
+    if (!this.token) return false;
+    try {
+      await firstValueFrom(this.http.get(`${environment.apiUrl}/auth/session`));
+      this.authenticated.set(true);
+      return true;
+    } catch {
+      this.clear();
+      return false;
+    }
+  }
+
+  async logout(): Promise<void> {
+    try {
+      await firstValueFrom(this.http.post(`${environment.apiUrl}/auth/logout`, {}));
+    } finally {
+      this.clear();
+    }
   }
 }

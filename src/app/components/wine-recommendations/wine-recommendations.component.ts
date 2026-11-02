@@ -11,15 +11,9 @@ import { WineDetailModalComponent } from '../wine-detail-modal/wine-detail-modal
 @Component({
   selector: 'app-wine-recommendations',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule
-  ],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './wine-recommendations.component.html',
-  styleUrl: './wine-recommendations.component.scss'
+  styleUrl: './wine-recommendations.component.scss',
 })
 export class WineRecommendationsComponent {
   private readonly wineService = inject(WineService);
@@ -33,6 +27,12 @@ export class WineRecommendationsComponent {
   }
 
   private readonly _pairingSuggestions = signal<string[]>([]);
+
+  readonly loading = this.wineService.loading;
+  readonly error = this.wineService.error;
+  retry(): void {
+    void this.wineService.refresh();
+  }
 
   readonly recommendationMessage = this.wineService.recommendationMessage;
 
@@ -57,7 +57,7 @@ export class WineRecommendationsComponent {
       data: wine,
       panelClass: 'wine-detail-dialog',
       maxWidth: '500px',
-      width: '90vw'
+      width: '90vw',
     });
   }
 }
