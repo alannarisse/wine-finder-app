@@ -5,5 +5,8 @@
       "Bash(npx ng add:*)",
       "Bash(npm run build:*)"
     ]
+  },
+  "enabledPlugins": {
+    "playwright-skill@playwright-skill": true
   }
 }

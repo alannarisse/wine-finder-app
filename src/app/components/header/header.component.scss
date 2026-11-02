@@ -22,7 +22,7 @@ header {
   }
 
   // Background image - mobile first
-  background-image: url('/images/bg/mobile.jpg');
+  background-image: url('/images/bg/wine-lady-mobile.png');
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -62,7 +62,7 @@ header {
   }
 
   @media only screen and (min-width: 768px) {
-    background-image: url('/images/bg/desktop.jpg');
+    background-image: url('/images/bg/wine-lady-desktop.png');
     height: 440px;
     padding: var(--space-7, 48px);
   }

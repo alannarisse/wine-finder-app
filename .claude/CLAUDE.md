@@ -10,6 +10,13 @@ A wine pairing recommendation tool that helps users find the perfect wine to mat
 - **Hosting**: Vercel (frontend) / Railway (backend + database)
 - **Styling**: SCSS with Angular Material theming
 
+### UI Libraries
+- **FontAwesome** - Icon library (`@fortawesome/angular-fontawesome`)
+- **Chart.js** - Charts and graphs (`ng2-charts`)
+- **AG Grid** - Data grid (`ag-grid-angular`)
+- **html2canvas** - Screenshot/export to image
+- **Maskito** - Input masking (`@maskito/angular`)
+
 ## Project Structure
 ```
 wine-and-food-pairing-ang/
