@@ -1,7 +1,5 @@
-declare const process: { env: { [key: string]: string } };
-
 export const environment = {
   production: true,
-  // Falls back to placeholder if not set - update after Railway deploy
-  apiUrl: 'https://your-railway-api-url.railway.app/api',
+  // Set this to the Railway API service's public HTTPS domain, including /api.
+  apiUrl: 'https://wine-api-production-1167.up.railway.app/api',
 };

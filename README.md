@@ -110,3 +110,20 @@ The admin password is verified by the API. It is no longer stored in the Angular
 Sessions expire after eight hours and are revoked on logout. API restarts sign admins out. The current server session store supports one API replica; add shared session storage before scaling. Deployed frontend and API URLs must use HTTPS. Public pairing recommendations remain available without logging in.
 
 Authentication checks: `npx playwright test e2e/admin-auth.spec.ts e2e/admin-api.spec.ts` (mocked API; installed Chrome). Backend tests: from `wine-api`, `npm run test:e2e -- --runInBand --testPathPatterns=auth.e2e-spec.ts` (no database).
+
+## Development and production API URLs
+
+Angular selects the API URL at build time using `fileReplacements` in `angular.json`:
+
+| Command | Configuration | API URL source |
+| --- | --- | --- |
+| `npm start` / `ng serve` | Development | `src/environments/environment.ts` — `http://localhost:3000/api` |
+| `npm run build` / `ng build` | Production (default) | `src/environments/environment.prod.ts` — `https://wine-api-production-1167.up.railway.app/api` |
+| `ng build --configuration development` | Development | Localhost |
+| `ng serve --configuration production` | Production | Railway |
+
+Set `apiUrl` in `environment.prod.ts` to your Railway **API service's public HTTPS URL**, ending in `/api`. The production URL is configured as `https://wine-api-production-1167.up.railway.app/api`. Do not append `:3000` to this public HTTPS address; Railway forwards traffic to the internal application port. Use the API domain, not PostgreSQL's database connection URL. This public URL is safe to include in browser code; passwords and database credentials are not.
+
+Deploy the production build from `dist/wine-finder-app/browser/`. Changing the production URL requires rebuilding and redeploying the frontend. Running the development server locally uses localhost; serving a production build locally still uses Railway. This is selected by the build command, not by guessing the browser hostname.
+
+On Railway, set the API's `CORS_ORIGIN` to the deployed frontend origin. The API environment variables do not automatically become Angular build variables.
