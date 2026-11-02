@@ -3,14 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 export const authGuard: CanActivateFn = () => {
-  const authService = inject(AuthService);
+  const auth = inject(AuthService);
   const router = inject(Router);
-
-  if (authService.isAuthenticated()) {
-    return true;
-  }
-
-  // Redirect to admin login
-  router.navigate(['/admin/login']);
-  return false;
+  return auth.checkSession().then((valid) => valid || router.createUrlTree(['/admin/login']));
 };

@@ -2,8 +2,8 @@
   <div class="mapping-header">
     <h2>Varietal to Wine Mapping</h2>
     <p class="description">
-      Map specific wines to varietal suggestions. When a pairing suggests a varietal,
-      wines mapped here will appear as purchasable recommendations.
+      Map specific wines to varietal suggestions. When a pairing suggests a varietal, wines mapped
+      here will appear as purchasable recommendations.
     </p>
   </div>
 
@@ -31,7 +31,12 @@
                       <span class="chip-name">{{ wine.wineName }}</span>
                       <span class="chip-winery">{{ wine.wineryName }}</span>
                     </div>
-                    <button mat-icon-button (click)="removeWineFromVarietal(varietal, wine.id)" class="remove-btn">
+                    <button
+                      mat-icon-button
+                      (click)="removeWineFromVarietal(varietal, wine.id)"
+                      class="remove-btn"
+                      [disabled]="saving()"
+                    >
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>
@@ -46,10 +51,15 @@
             <h4>Add Wine</h4>
             <mat-form-field appearance="outline">
               <mat-label>Select a wine to add</mat-label>
-              <mat-select (selectionChange)="addWineToVarietal(varietal, $event.value)">
+              <mat-select
+                [disabled]="saving()"
+                (selectionChange)="addWineToVarietal(varietal, $event.value)"
+              >
                 @for (wine of getAvailableWinesForVarietal(varietal); track wine.id) {
                   <mat-option [value]="wine.id">
-                    {{ wine.wineName }} - {{ wine.wineryName }} ({{ formatPrice(wine.estimatedPrice) }})
+                    {{ wine.wineName }} - {{ wine.wineryName }} ({{
+                      formatPrice(wine.estimatedPrice)
+                    }})
                   </mat-option>
                 }
               </mat-select>

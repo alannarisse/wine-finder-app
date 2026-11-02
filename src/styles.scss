@@ -63,34 +63,34 @@ $wine-tertiary: (
 // =============================================================================
 :root {
   // Core palette from CLAUDE.md
-  --color-primary: #0a7373;
-  --color-primary-light: #4ea5a5;
-  --color-primary-dark: #085c5c;
-  --color-secondary: #c43302;
-  --color-secondary-light: #e05f38;
-  --color-tertiary: #edaa25;
-  --color-tertiary-light: #f5c04a;
+  --color-primary: var(--gh-wine);
+  --color-primary-light: var(--gh-coral);
+  --color-primary-dark: #49212c;
+  --color-secondary: #a34530;
+  --color-secondary-light: var(--gh-coral);
+  --color-tertiary: var(--gh-peach);
+  --color-tertiary-light: var(--gh-blush);
 
   // Text hierarchy
-  --color-text-dark: #010221;
-  --color-text-medium: #315D5D;
-  --color-text-light: #9DC1C1;
-  --color-text-muted: #6b7c7c;
+  --color-text-dark: var(--gh-wine);
+  --color-text-medium: #72545b;
+  --color-text-light: #81656b;
+  --color-text-muted: #81656b;
   --color-text-white: #f9fafa;
 
   // Backgrounds
-  --color-background: #ffffff;
-  --color-background-warm: #fefcf9;
+  --color-background: var(--gh-cream);
+  --color-background-warm: var(--gh-cream);
   --color-card-bg: rgba(255, 255, 255, 0.92);
-  --color-footer-bg: #3d4545;
+  --color-footer-bg: var(--gh-cream);
 
   // State
   --color-error: #dc2626;
   --color-disabled: #9DC1C1;
 
   // Typography - Distinctive fonts per frontend-design skill
-  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --font-body: 'Quattrocento Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
   // Spacing scale
   --space-1: 4px;
@@ -112,7 +112,7 @@ $wine-tertiary: (
   --shadow-sm: 0 1px 2px rgba(1, 2, 33, 0.05);
   --shadow-md: 0 4px 12px rgba(1, 2, 33, 0.08), 0 2px 4px rgba(1, 2, 33, 0.04);
   --shadow-lg: 0 12px 32px rgba(1, 2, 33, 0.12), 0 4px 8px rgba(1, 2, 33, 0.06);
-  --shadow-glow: 0 0 40px rgba(10, 115, 115, 0.15);
+  --shadow-glow: 0 0 40px rgba(112, 54, 67, 0.15);
 
   // Transitions
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -133,7 +133,7 @@ html {
         primary: $wine-primary,
         tertiary: $wine-tertiary,
       ),
-      typography: 'Quattrocento Sans',
+      typography: 'Work Sans',
       density: 0,
     )
   );
@@ -156,25 +156,13 @@ body {
   min-height: 100vh;
   color: var(--color-text-dark);
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.6;
   background: var(--color-footer-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  // Subtle texture overlay for atmosphere
-  &::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
-  }
+
 }
 
 // =============================================================================
@@ -265,7 +253,7 @@ a {
   background-color: rgba(255,255,255,.9);
   border-radius: var(--radius-md) !important;
   box-shadow: var(--shadow-lg) !important;
-  // border: 1px solid rgba(10, 115, 115, 0.9);
+  // border: 1px solid var(--gh-wine);
   overflow: hidden;
 
   // Elegant entrance animation
@@ -294,11 +282,11 @@ a {
   
   &.mat-mdc-option-active,
   &:hover {
-    background-color: rgba(10, 115, 115, 0.6) !important;
+    background-color: var(--gh-blush) !important;
   }
 
   &.mdc-list-item--selected {
-    background-color: rgba(10, 115, 115, 0.9) !important;
+    background-color: var(--gh-wine) !important;
 
     .mdc-list-item__primary-text {
       color: white !important;
@@ -320,17 +308,17 @@ a {
 }
 
 .mat-mdc-raised-button.mat-primary {
-  box-shadow: var(--shadow-sm), 0 4px 12px rgba(10, 115, 115, 0.5) !important;
+  box-shadow: var(--shadow-sm), 0 4px 12px rgba(112, 54, 67, 0.5) !important;
 
   &:hover {
-    box-shadow: var(--shadow-md), 0 6px 20px rgba(10, 115, 115, 0.6) !important;
+    box-shadow: var(--shadow-md), 0 6px 20px var(--gh-blush) !important;
     transform: translateY(-1px);
   }
 }
 
 // Dividers
 .mat-divider {
-  border-color: rgba(10, 115, 115, 0.6) !important;
+  border-color: var(--gh-blush) !important;
 }
 
 // =============================================================================
@@ -392,4 +380,27 @@ a {
 
 .animate-fade-up {
   animation: fadeUp var(--duration-slow) var(--ease-out) both;
+}
+
+// Shared Golden Hour palette, also used by dialogs and administration.
+:root {
+  --gh-cream: oklch(0.987 0.008 60);
+  --gh-blush: oklch(0.932 0.03 40);
+  --gh-peach: oklch(0.83 0.09 55);
+  --gh-coral: oklch(0.7 0.14 38);
+  --gh-wine: oklch(0.32 0.08 10);
+  --gh-shadow: 0 20px 50px -20px color-mix(in oklab, var(--gh-coral) 45%, transparent);
+}
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: var(--gh-peach);
+  --mdc-outlined-text-field-focus-outline-color: var(--gh-wine);
+  --mdc-outlined-text-field-container-shape: 28px;
+}
+.mat-mdc-select { background: transparent; }
+.mat-mdc-select-panel { overflow-y: auto; background: var(--gh-cream); }
+.mat-mdc-option { background: var(--gh-cream); }
+.mat-mdc-option:hover, .mat-mdc-option.mat-mdc-option-active { color: var(--gh-wine); }
+.mat-mdc-raised-button.mat-primary, .mat-mdc-flat-button.mat-primary { background: var(--gh-wine); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }

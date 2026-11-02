@@ -1,16 +1,57 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Wine } from '../models/wine.model';
-import { WINES_DATA, VARIETAL_TO_WINES, WINE_RECOMMENDATION_MESSAGE } from '../data/wines.data';
+import { WINE_RECOMMENDATION_MESSAGE } from '../data/wines.data';
+
+import { firstValueFrom, forkJoin } from 'rxjs';
+import { WineApiService } from './wine-api.service';
+import { PairingService } from './pairing.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WineService {
-  private readonly wines = signal<Wine[]>([...WINES_DATA]);
-  private readonly varietalMappingSignal = signal<Map<string, number[]>>(
-    new Map(Object.entries(VARIETAL_TO_WINES))
-  );
-  private nextId = Math.max(...WINES_DATA.map(w => w.id)) + 1;
+  private readonly api = inject(WineApiService);
+  private readonly pairingService = inject(PairingService);
+  private readonly wines = signal<Wine[]>([]);
+  private readonly varietalMappingSignal = signal<Map<string, number[]>>(new Map());
+  readonly loading = signal(true);
+  readonly error = signal('');
+  readonly saving = signal(false);
+
+  constructor() {
+    void this.refresh();
+  }
+
+  async refresh(): Promise<void> {
+    this.loading.set(true);
+    this.error.set('');
+    try {
+      const { wines, mappings } = await firstValueFrom(
+        forkJoin({
+          wines: this.api.getAllWines(),
+          mappings: this.api.getAllMappings(),
+        }),
+      );
+      this.wines.set(
+        wines.map((wine) => ({ ...wine, estimatedPrice: Number(wine.estimatedPrice) })),
+      );
+      this.varietalMappingSignal.set(new Map(Object.entries(mappings)));
+    } catch {
+      this.error.set('Could not load saved wines. Check that the API is running, then retry.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private async save<T>(action: () => Promise<T>, update: (result: T) => void): Promise<void> {
+    if (this.saving()) throw new Error('Another change is still being saved. Please try again.');
+    this.saving.set(true);
+    try {
+      update(await action());
+    } finally {
+      this.saving.set(false);
+    }
+  }
 
   readonly recommendationMessage = WINE_RECOMMENDATION_MESSAGE;
 
@@ -30,7 +71,7 @@ export class WineService {
    * Get a single wine by ID
    */
   getWineById(id: number): Wine | undefined {
-    return this.wines().find(wine => wine.id === id);
+    return this.wines().find((wine) => wine.id === id);
   }
 
   /**
@@ -45,9 +86,9 @@ export class WineService {
     // If no exact match, try to find a partial match
     if (!wineIds) {
       const varietalLower = varietal.toLowerCase();
-      const matchingKey = Object.keys(this.varietalMapping).find(key =>
-        key.toLowerCase().includes(varietalLower) ||
-        varietalLower.includes(key.toLowerCase())
+      const matchingKey = Object.keys(this.varietalMapping).find(
+        (key) =>
+          key.toLowerCase().includes(varietalLower) || varietalLower.includes(key.toLowerCase()),
       );
       if (matchingKey) {
         wineIds = this.varietalMapping[matchingKey];
@@ -59,7 +100,7 @@ export class WineService {
     }
 
     return wineIds
-      .map(id => this.getWineById(id))
+      .map((id) => this.getWineById(id))
       .filter((wine): wine is Wine => wine !== undefined);
   }
 
@@ -100,7 +141,7 @@ export class WineService {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(price);
   }
 
@@ -121,40 +162,45 @@ export class WineService {
 
   // ==================== ADMIN CRUD OPERATIONS ====================
 
-  /**
-   * Add a new wine
-   */
-  addWine(wine: Omit<Wine, 'id'>): Wine {
-    const newWine: Wine = {
-      ...wine,
-      id: this.nextId++
-    };
-    this.wines.update(wines => [...wines, newWine]);
-    return newWine;
-  }
-
-  /**
-   * Update an existing wine
-   */
-  updateWine(wine: Wine): void {
-    this.wines.update(wines =>
-      wines.map(w => w.id === wine.id ? wine : w)
+  async addWine(wine: Omit<Wine, 'id'>): Promise<void> {
+    await this.save(
+      () => firstValueFrom(this.api.createWine(wine)),
+      (saved) => {
+        this.wines.update((wines) => [
+          ...wines,
+          { ...saved, estimatedPrice: Number(saved.estimatedPrice) },
+        ]);
+      },
     );
   }
 
-  /**
-   * Delete a wine by ID
-   */
-  deleteWine(id: number): void {
-    this.wines.update(wines => wines.filter(w => w.id !== id));
-    // Also remove from all varietal mappings
-    this.varietalMappingSignal.update(mapping => {
-      const newMapping = new Map(mapping);
-      for (const [varietal, ids] of newMapping.entries()) {
-        newMapping.set(varietal, ids.filter(wId => wId !== id));
-      }
-      return newMapping;
-    });
+  async updateWine(wine: Wine): Promise<void> {
+    const { id, ...payload } = wine;
+    await this.save(
+      () => firstValueFrom(this.api.updateWine(id, payload)),
+      (saved) => {
+        this.wines.update((wines) =>
+          wines.map((w) =>
+            w.id === id ? { ...saved, estimatedPrice: Number(saved.estimatedPrice) } : w,
+          ),
+        );
+      },
+    );
+  }
+
+  async deleteWine(id: number): Promise<void> {
+    await this.save(
+      () => firstValueFrom(this.api.deleteWine(id)),
+      () => {
+        this.wines.update((wines) => wines.filter((w) => w.id !== id));
+        this.varietalMappingSignal.update(
+          (mapping) =>
+            new Map(
+              [...mapping].map(([label, ids]) => [label, ids.filter((wineId) => wineId !== id)]),
+            ),
+        );
+      },
+    );
   }
 
   /**
@@ -181,44 +227,42 @@ export class WineService {
     return new Map(this.varietalMappingSignal());
   }
 
-  /**
-   * Add a wine to a varietal mapping
-   */
-  addWineToVarietal(varietal: string, wineId: number): void {
-    this.varietalMappingSignal.update(mapping => {
-      const newMapping = new Map(mapping);
-      const currentIds = newMapping.get(varietal) || [];
-      if (!currentIds.includes(wineId)) {
-        newMapping.set(varietal, [...currentIds, wineId]);
-      }
-      return newMapping;
-    });
+  getMappingLabels(): string[] {
+    return [
+      ...new Set([
+        ...this.varietalMappingSignal().keys(),
+        ...this.pairingService.getAllPairings().flatMap((pairing) => pairing.pairingSuggestions),
+      ]),
+    ].sort();
   }
 
-  /**
-   * Remove a wine from a varietal mapping
-   */
-  removeWineFromVarietal(varietal: string, wineId: number): void {
-    this.varietalMappingSignal.update(mapping => {
-      const newMapping = new Map(mapping);
-      const currentIds = newMapping.get(varietal) || [];
-      newMapping.set(varietal, currentIds.filter(id => id !== wineId));
-      return newMapping;
-    });
+  async addWineToVarietal(varietal: string, wineId: number): Promise<void> {
+    await this.save(
+      () => firstValueFrom(this.api.addMapping(varietal, wineId)),
+      () => {
+        this.varietalMappingSignal.update((mapping) => {
+          const next = new Map(mapping);
+          next.set(varietal, [...new Set([...(next.get(varietal) || []), wineId])]);
+          return next;
+        });
+      },
+    );
   }
 
-  /**
-   * Add a new varietal to the mapping
-   */
-  addVarietal(varietal: string): void {
-    this.varietalMappingSignal.update(mapping => {
-      if (!mapping.has(varietal)) {
-        const newMapping = new Map(mapping);
-        newMapping.set(varietal, []);
-        return newMapping;
-      }
-      return mapping;
-    });
+  async removeWineFromVarietal(varietal: string, wineId: number): Promise<void> {
+    await this.save(
+      () => firstValueFrom(this.api.removeMapping(varietal, wineId)),
+      () => {
+        this.varietalMappingSignal.update((mapping) => {
+          const next = new Map(mapping);
+          next.set(
+            varietal,
+            (next.get(varietal) || []).filter((id) => id !== wineId),
+          );
+          return next;
+        });
+      },
+    );
   }
 
   // ==================== DATA EXPORT ====================
@@ -229,7 +273,7 @@ export class WineService {
   exportData(): { wines: Wine[]; varietalMappings: Record<string, number[]> } {
     return {
       wines: this.wines(),
-      varietalMappings: Object.fromEntries(this.varietalMappingSignal())
+      varietalMappings: Object.fromEntries(this.varietalMappingSignal()),
     };
   }
 }

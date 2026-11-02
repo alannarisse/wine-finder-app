@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -30,10 +30,10 @@ import { VarietalMappingComponent } from '../../components/varietal-mapping/vari
     MatTabsModule,
     MatChipsModule,
     MatTooltipModule,
-    VarietalMappingComponent
+    VarietalMappingComponent,
   ],
   templateUrl: './admin.component.html',
-  styleUrl: './admin.component.scss'
+  styleUrl: './admin.component.scss',
 })
 export class AdminComponent {
   private readonly wineService = inject(WineService);
@@ -42,28 +42,33 @@ export class AdminComponent {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly wines = signal<Wine[]>([]);
-  readonly displayedColumns = ['thumbnail', 'wineName', 'wineryName', 'varietal', 'year', 'price', 'actions'];
+  readonly wines = computed(() => this.wineService.getAllWines());
+  readonly loading = this.wineService.loading;
+  readonly error = this.wineService.error;
+  readonly saving = this.wineService.saving;
+  readonly displayedColumns = [
+    'thumbnail',
+    'wineName',
+    'wineryName',
+    'varietal',
+    'year',
+    'price',
+    'actions',
+  ];
 
-  constructor() {
-    this.loadWines();
-  }
-
-  private loadWines(): void {
-    this.wines.set(this.wineService.getAllWines());
+  retry(): void {
+    void this.wineService.refresh();
   }
 
   openAddDialog(): void {
     const dialogRef = this.dialog.open(WineFormDialogComponent, {
       width: '600px',
       maxWidth: '95vw',
-      data: { wine: null, mode: 'add' }
+      data: { wine: null, mode: 'add' },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.wineService.addWine(result);
-        this.loadWines();
         this.snackBar.open('Wine added successfully', 'Close', { duration: 3000 });
       }
     });
@@ -73,23 +78,23 @@ export class AdminComponent {
     const dialogRef = this.dialog.open(WineFormDialogComponent, {
       width: '600px',
       maxWidth: '95vw',
-      data: { wine, mode: 'edit' }
+      data: { wine, mode: 'edit' },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.wineService.updateWine(result);
-        this.loadWines();
         this.snackBar.open('Wine updated successfully', 'Close', { duration: 3000 });
       }
     });
   }
 
-  deleteWine(wine: Wine): void {
-    if (confirm(`Are you sure you want to delete "${wine.wineName}"?`)) {
-      this.wineService.deleteWine(wine.id);
-      this.loadWines();
+  async deleteWine(wine: Wine): Promise<void> {
+    if (this.saving() || !confirm(`Are you sure you want to delete "${wine.wineName}"?`)) return;
+    try {
+      await this.wineService.deleteWine(wine.id);
       this.snackBar.open('Wine deleted', 'Close', { duration: 3000 });
+    } catch {
+      this.snackBar.open('Could not delete wine. Please retry.', 'Close', { duration: 5000 });
     }
   }
 
@@ -113,8 +118,16 @@ export class AdminComponent {
     this.snackBar.open('Data exported successfully', 'Close', { duration: 3000 });
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/']);
+  async logout(): Promise<void> {
+    try {
+      await this.authService.logout();
+    } catch {
+      this.snackBar.open(
+        'Could not revoke the server session. Local login cleared; the session expires within 8 hours.',
+        'Close',
+        { duration: 6000 },
+      );
+    }
+    await this.router.navigate(['/']);
   }
 }

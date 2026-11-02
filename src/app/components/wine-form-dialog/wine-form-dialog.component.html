@@ -15,11 +15,17 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Varietal</mat-label>
-        <mat-select formControlName="varietal">
+        <input
+          matInput
+          formControlName="varietal"
+          placeholder="e.g., Pinot Noir"
+          list="wine-varietals"
+        />
+        <datalist id="wine-varietals">
           @for (varietal of varietals; track varietal) {
-            <mat-option [value]="varietal">{{ varietal }}</mat-option>
+            <option [value]="varietal"></option>
           }
-        </mat-select>
+        </datalist>
         @if (form.get('varietal')?.hasError('required')) {
           <mat-error>Varietal is required</mat-error>
         }
@@ -42,7 +48,12 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Description (optional)</mat-label>
-        <textarea matInput formControlName="description" rows="3" placeholder="Tasting notes, awards, etc."></textarea>
+        <textarea
+          matInput
+          formControlName="description"
+          rows="3"
+          placeholder="Tasting notes, awards, etc."
+        ></textarea>
       </mat-form-field>
     </div>
 
@@ -51,7 +62,11 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Winery Name</mat-label>
-        <input matInput formControlName="wineryName" placeholder="e.g., Willamette Valley Vineyards" />
+        <input
+          matInput
+          formControlName="wineryName"
+          placeholder="e.g., Willamette Valley Vineyards"
+        />
         @if (form.get('wineryName')?.hasError('required')) {
           <mat-error>Winery name is required</mat-error>
         }
@@ -128,9 +143,17 @@
   </form>
 </mat-dialog-content>
 
+@if (saveError()) {
+  <p role="alert">{{ saveError() }}</p>
+}
 <mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid">
-    {{ isEditMode ? 'Save Changes' : 'Add Wine' }}
+  <button mat-button (click)="onCancel()" [disabled]="saving()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="form.invalid || saving()"
+  >
+    {{ saving() ? 'Saving…' : isEditMode ? 'Save Changes' : 'Add Wine' }}
   </button>
 </mat-dialog-actions>

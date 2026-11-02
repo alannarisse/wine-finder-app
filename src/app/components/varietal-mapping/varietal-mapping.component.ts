@@ -23,55 +23,51 @@ import { Wine } from '../../models/wine.model';
     MatButtonModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './varietal-mapping.component.html',
-  styleUrl: './varietal-mapping.component.scss'
+  styleUrl: './varietal-mapping.component.scss',
 })
 export class VarietalMappingComponent {
   private readonly wineService = inject(WineService);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly varietalMappings = signal<Map<string, number[]>>(new Map());
-  readonly allWines = signal<Wine[]>([]);
-
-  constructor() {
-    this.loadData();
-  }
-
-  private loadData(): void {
-    this.varietalMappings.set(this.wineService.getVarietalMappings());
-    this.allWines.set(this.wineService.getAllWines());
-  }
+  readonly saving = this.wineService.saving;
+  readonly varietalMappings = computed(() => this.wineService.getVarietalMappings());
+  readonly allWines = computed(() => this.wineService.getAllWines());
 
   get varietalList(): string[] {
-    return Array.from(this.varietalMappings().keys()).sort();
+    return this.wineService.getMappingLabels();
   }
 
   getWinesForVarietal(varietal: string): Wine[] {
     const wineIds = this.varietalMappings().get(varietal) || [];
-    return wineIds.map(id => this.allWines().find(w => w.id === id)).filter((w): w is Wine => !!w);
+    return wineIds
+      .map((id) => this.allWines().find((w) => w.id === id))
+      .filter((w): w is Wine => !!w);
   }
 
   getAvailableWinesForVarietal(varietal: string): Wine[] {
     const currentIds = this.varietalMappings().get(varietal) || [];
-    return this.allWines().filter(w =>
-      w.varietal.toLowerCase().includes(varietal.toLowerCase()) ||
-      varietal.toLowerCase().includes(w.varietal.toLowerCase()) ||
-      !currentIds.includes(w.id)
-    );
+    return this.allWines().filter((w) => !currentIds.includes(w.id));
   }
 
-  addWineToVarietal(varietal: string, wineId: number): void {
-    this.wineService.addWineToVarietal(varietal, wineId);
-    this.loadData();
-    this.snackBar.open('Wine added to varietal mapping', 'Close', { duration: 2000 });
+  async addWineToVarietal(varietal: string, wineId: number): Promise<void> {
+    try {
+      await this.wineService.addWineToVarietal(varietal, wineId);
+      this.snackBar.open('Wine added to varietal mapping', 'Close', { duration: 2000 });
+    } catch {
+      this.snackBar.open('Could not save mapping. Please retry.', 'Close', { duration: 5000 });
+    }
   }
 
-  removeWineFromVarietal(varietal: string, wineId: number): void {
-    this.wineService.removeWineFromVarietal(varietal, wineId);
-    this.loadData();
-    this.snackBar.open('Wine removed from varietal mapping', 'Close', { duration: 2000 });
+  async removeWineFromVarietal(varietal: string, wineId: number): Promise<void> {
+    try {
+      await this.wineService.removeWineFromVarietal(varietal, wineId);
+      this.snackBar.open('Wine removed from varietal mapping', 'Close', { duration: 2000 });
+    } catch {
+      this.snackBar.open('Could not remove mapping. Please retry.', 'Close', { duration: 5000 });
+    }
   }
 
   formatPrice(price: number): string {

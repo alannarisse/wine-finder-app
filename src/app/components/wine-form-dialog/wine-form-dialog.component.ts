@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -26,10 +26,10 @@ interface DialogData {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   templateUrl: './wine-form-dialog.component.html',
-  styleUrl: './wine-form-dialog.component.scss'
+  styleUrl: './wine-form-dialog.component.scss',
 })
 export class WineFormDialogComponent {
   private readonly fb = inject(FormBuilder);
@@ -37,6 +37,8 @@ export class WineFormDialogComponent {
   private readonly wineService = inject(WineService);
   readonly data = inject<DialogData>(MAT_DIALOG_DATA);
 
+  readonly saving = signal(false);
+  readonly saveError = signal('');
   readonly varietals = this.wineService.getAvailableVarietals();
   readonly form: FormGroup;
   readonly isEditMode: boolean;
@@ -49,33 +51,60 @@ export class WineFormDialogComponent {
       wineName: [this.data.wine?.wineName || '', Validators.required],
       varietal: [this.data.wine?.varietal || '', Validators.required],
       year: [this.data.wine?.year || null],
-      estimatedPrice: [this.data.wine?.estimatedPrice || '', [Validators.required, Validators.min(0)]],
+      estimatedPrice: [
+        this.data.wine?.estimatedPrice ?? '',
+        [Validators.required, Validators.min(0)],
+      ],
       wineryCity: [this.data.wine?.wineryCity || '', Validators.required],
       wineryState: [this.data.wine?.wineryState || '', Validators.required],
       ava: [this.data.wine?.ava || ''],
       wineryAddress: [this.data.wine?.wineryAddress || '', Validators.required],
-      wineryUrl: [this.data.wine?.wineryUrl || '', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
+      wineryUrl: [
+        this.data.wine?.wineryUrl || '',
+        [Validators.required, Validators.pattern(/^https?:\/\/.+/)],
+      ],
       imageUrl: [this.data.wine?.imageUrl || '', Validators.required],
       thumbnailUrl: [this.data.wine?.thumbnailUrl || '', Validators.required],
-      description: [this.data.wine?.description || '']
+      description: [this.data.wine?.description || ''],
     });
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      const formValue = this.form.value;
-      const wine: Wine = {
-        id: this.isEditMode ? this.data.wine!.id : 0,
-        ...formValue,
-        year: formValue.year ? parseInt(formValue.year, 10) : null,
-        estimatedPrice: parseFloat(formValue.estimatedPrice)
-      };
-      this.dialogRef.close(wine);
+  async onSubmit(): Promise<void> {
+    if (this.form.invalid || this.saving()) return;
+    this.saving.set(true);
+    this.saveError.set('');
+    this.dialogRef.disableClose = true;
+    const value = this.form.value;
+    const wine: Wine = {
+      ...value,
+      id: this.data.wine?.id || 0,
+      year: value.year === null || value.year === '' ? null : Number(value.year),
+      estimatedPrice: Number(value.estimatedPrice),
+    };
+    try {
+      if (this.isEditMode) await this.wineService.updateWine(wine);
+      else {
+        const { id, ...payload } = wine;
+        await this.wineService.addWine(payload);
+      }
+      this.dialogRef.close(true);
+    } catch (error: any) {
+      const messages = error?.error?.message;
+      this.saveError.set(
+        Array.isArray(messages)
+          ? messages.join('. ')
+          : typeof messages === 'string'
+            ? messages
+            : 'Could not save wine. Check the API connection and retry.',
+      );
+    } finally {
+      this.saving.set(false);
+      this.dialogRef.disableClose = false;
     }
   }
 
   onCancel(): void {
-    this.dialogRef.close();
+    if (!this.saving()) this.dialogRef.close();
   }
 
   useSameAsImage(): void {

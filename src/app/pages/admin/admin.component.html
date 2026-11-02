@@ -2,7 +2,11 @@
   <div class="admin-header">
     <h1>Wine Admin</h1>
     <div class="header-actions">
-      <button mat-stroked-button (click)="exportData()">
+      <button
+        mat-stroked-button
+        (click)="exportData()"
+        [disabled]="loading() || !!error() || saving()"
+      >
         <mat-icon>download</mat-icon>
         Export Data
       </button>
@@ -13,12 +17,24 @@
     </div>
   </div>
 
+  @if (loading()) {
+    <p role="status">Loading saved wines…</p>
+  }
+  @if (error()) {
+    <p role="alert">{{ error() }}</p>
+    <button mat-button (click)="retry()">Retry</button>
+  }
   <mat-tab-group animationDuration="200ms">
     <mat-tab label="Wines">
       <div class="tab-content">
         <div class="table-header">
           <h2>Wine Inventory</h2>
-          <button mat-raised-button color="primary" (click)="openAddDialog()">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="openAddDialog()"
+            [disabled]="loading() || !!error() || saving()"
+          >
             <mat-icon>add</mat-icon>
             Add Wine
           </button>
@@ -63,21 +79,33 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let wine">
-                <button mat-icon-button color="primary" (click)="openEditDialog(wine)" matTooltip="Edit">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="openEditDialog(wine)"
+                  [disabled]="saving() || loading() || !!error()"
+                  matTooltip="Edit" aria-label="Edit wine"
+                >
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button color="warn" (click)="deleteWine(wine)" matTooltip="Delete">
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteWine(wine)"
+                  [disabled]="saving() || loading() || !!error()"
+                  matTooltip="Delete" aria-label="Delete wine"
+                >
                   <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
         </div>
 
-        @if (wines().length === 0) {
+        @if (!loading() && !error() && wines().length === 0) {
           <div class="empty-state">
             <mat-icon>wine_bar</mat-icon>
             <p>No wines added yet. Click "Add Wine" to get started.</p>
@@ -88,7 +116,9 @@
 
     <mat-tab label="Varietal Mapping">
       <div class="tab-content">
-        <app-varietal-mapping></app-varietal-mapping>
+        @if (!loading() && !error()) {
+          <app-varietal-mapping></app-varietal-mapping>
+        }
       </div>
     </mat-tab>
   </mat-tab-group>
